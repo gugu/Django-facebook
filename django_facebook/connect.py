@@ -220,6 +220,8 @@ def _register_user(request, facebook, profile_callback=None,
 
     form = form_class(data=data, files=request.FILES,
                       initial={'ip': request.META['REMOTE_ADDR']})
+    if 'email' in data and get_user_model().objects.filter(email=data['email']).count():
+        raise facebook_exceptions.AlreadyRegistered()
 
     if not form.is_valid():
         error_message_format = u'Facebook data %s gave error %s'
